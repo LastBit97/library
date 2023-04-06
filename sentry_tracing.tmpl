@@ -1,0 +1,23 @@
+{{ define "sentry_tracing" }}
+
+
+{{/* A template that adds the functionality for Sentry tracing for each client  */}}
+
+
+{{/* Add the base header for the generated file */}}
+{{ $pkg := base $.Config.Package }}
+{{ template "header" $ }}
+
+
+{{/* Loop over all nodes and add the Sentry tracing method */}}
+{{ range $n := $.Nodes }}
+    {{ $client := print $n.Name "Client" }}
+    func (c *{{ $client }}) WithSentryTracing() *{{ $client }} {
+        cfg := config{driver: entgosentry.Trace(c.driver), log: c.log, debug: false, hooks: c.hooks, inters: c.inters}
+        return &{{ $client }}{config: cfg}
+}
+
+{{ end }}
+
+
+{{ end }}
